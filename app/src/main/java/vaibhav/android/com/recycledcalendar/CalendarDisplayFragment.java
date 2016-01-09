@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -59,7 +60,10 @@ public class CalendarDisplayFragment extends Fragment implements CalendarAdapter
     linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
     calendarRecyclerView.setLayoutManager(linearLayoutManager);
     CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), calendarDateBeanList, this, events);
-    calendarRecyclerView.setAdapter(calendarAdapter);
+    AlphaInAnimatingAdapter alphaInAnimatingAdapter = new AlphaInAnimatingAdapter(calendarAdapter);
+    alphaInAnimatingAdapter.setDuration(5000);
+    alphaInAnimatingAdapter.setInterpolator(new OvershootInterpolator());
+    calendarRecyclerView.setAdapter(new ScaleInAnimationAdapter(alphaInAnimatingAdapter));
   }
 
   @Override
