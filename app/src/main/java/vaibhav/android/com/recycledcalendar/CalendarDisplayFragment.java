@@ -61,7 +61,7 @@ public class CalendarDisplayFragment extends Fragment implements CalendarAdapter
     calendarRecyclerView.setLayoutManager(linearLayoutManager);
     CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), calendarDateBeanList, this, events);
     AlphaInAnimatingAdapter alphaInAnimatingAdapter = new AlphaInAnimatingAdapter(calendarAdapter);
-    alphaInAnimatingAdapter.setDuration(5000);
+    alphaInAnimatingAdapter.setDuration(500);
     alphaInAnimatingAdapter.setInterpolator(new OvershootInterpolator());
     ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(alphaInAnimatingAdapter);
     calendarRecyclerView.setAdapter(scaleInAnimationAdapter);
