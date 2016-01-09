@@ -22,7 +22,7 @@ public class CalendarDateBean {
     calendar.setTime(currentDate.getTime());
     // determine the cell for current month's beginning
     currentPositionCalendar.set(Calendar.DATE, 1);
-    int monthBeginningCell = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+    int monthBeginningCell = currentPositionCalendar.get(Calendar.DAY_OF_WEEK) - 1;
 
     // move calendar backwards to the beginning of the week
     currentPositionCalendar.add(Calendar.DATE, -monthBeginningCell);

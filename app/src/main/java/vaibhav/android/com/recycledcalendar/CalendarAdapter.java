@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -29,7 +29,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
   private final ClickHandler clickHandler;
   private final HashSet<Date> events;
   private static final String DATE_FORMAT = "MMM yyyy";
-  private View lowestFareDate;
+  private TextView lowestFareDate;
   private Date clickedFareDate;
   private Calendar currentDate;
 
@@ -48,7 +48,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
   }
 
   @Override
-  public void onBindViewHolder(CalendarViewHolder holder, final int position) {
+  public void onBindViewHolder(final CalendarViewHolder holder, final int position) {
+    currentDate = calendarDateBeanList.get(position).getCalendar();
+    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+    holder.txtDate.setText(sdf.format(currentDate.getTime()));
+    CalendarMonthAdapter calendarMonthAdapter = new CalendarMonthAdapter(context, calendarDateBeanList.get(position).getCells());
+    holder.grid.setAdapter(calendarMonthAdapter);
+
     holder.grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int insidePosition, long id) {
@@ -59,34 +65,25 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
           if (lowestFareDate != null) {
             lowestFareDate.setBackgroundColor(context.getResources().getColor(R.color.transparent));
           }
-          lowestFareDate = view;
           clickedFareDate = clickedDate;
-          view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+          notifyDataSetChanged();
         }
       }
     });
-
-    currentDate = calendarDateBeanList.get(position).getCalendar();
-    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-    holder.txtDate.setText(sdf.format(currentDate.getTime()));
-    CalendarMonthAdapter calendarMonthAdapter = new CalendarMonthAdapter(context, calendarDateBeanList.get(position).getCells());
-    holder.grid.setAdapter(calendarMonthAdapter);
   }
 
   public HashSet<Date> getEvents() {
     return events;
   }
 
-  private class CalendarMonthAdapter extends ArrayAdapter<Date> {
+  private class CalendarMonthAdapter extends BaseAdapter {
     // days with events
     private HashSet<Date> eventDays;
-
     // for view inflation
     private LayoutInflater inflater;
     private final ArrayList<Date> days;
 
     public CalendarMonthAdapter(Context context, ArrayList<Date> days) {
-      super(context, R.layout.control_calendar_day, days);
       this.eventDays = getEvents();
       inflater = LayoutInflater.from(context);
       this.days = days;
@@ -94,8 +91,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
+      DateHolder dateHolder;
       // day in question
-      Date date = days.get(position);
+      final Date date = days.get(position);
       final Calendar currentPositionCalandar = Calendar.getInstance(Locale.getDefault());
       currentPositionCalandar.setTime(date);
       int day = currentPositionCalandar.get(Calendar.DATE);
@@ -107,32 +105,58 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
       if (view == null) {
         view = inflater.inflate(R.layout.control_calendar_day, parent, false);
+        dateHolder = new DateHolder();
+        dateHolder.date = (TextView) view.findViewById(R.id.date);
+        view.setTag(dateHolder);
+      } else {
+        dateHolder = (DateHolder) view.getTag();
       }
 
+      final View finalView = view;
+//      dateHolder.date.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+////          Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
+////          Date clickedDate = date;
+////          if (clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
+//          clickHandler.onDayPress(date);
+////            if (lowestFareDate != null) {
+////              lowestFareDate.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+////            }
+////            lowestFareDate = (TextView) finalView;
+//          clickedFareDate = date;
+//          notifyDataSetChanged();
+////            finalView.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+////          }
+//        }
+//      });
+//      dateHolder.date.setClickable(true);
       Calendar tempCalandar = Calendar.getInstance(Locale.getDefault());
       view.setBackgroundResource(0);
 
-      ((TextView) view).setTypeface(null, Typeface.NORMAL);
-      ((TextView) view).setTextColor(Color.BLACK);
+      dateHolder.date.setTypeface(null, Typeface.NORMAL);
+      dateHolder.date.setTextColor(Color.BLACK);
 
       if (month != currentDate.get(Calendar.MONTH) || year != currentDate.get(Calendar.YEAR)) {
         // if this day is outside current month, grey it out
         view.setVisibility(View.GONE);
-        ((TextView) view).setTextColor(context.getResources().getColor(R.color.greyed_out));
+        dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
       } else if (currentPositionCalandar.compareTo(todaysCalendar) == 0) {
         // if it is today, set it to blue/bold
-        ((TextView) view).setTypeface(null, Typeface.BOLD);
-        ((TextView) view).setTextColor(context.getResources().getColor(R.color.today));
+        view.setVisibility(View.VISIBLE);
+        dateHolder.date.setTypeface(null, Typeface.BOLD);
+        dateHolder.date.setTextColor(context.getResources().getColor(R.color.today));
       }
 
       if (month == currentDate.get(Calendar.MONTH)) {
-        ((TextView) view).setText(String.valueOf(currentPositionCalandar.get(Calendar.DATE)));
+        dateHolder.date.setText(String.valueOf(currentPositionCalandar.get(Calendar.DATE)));
       }
-      if (month == todaysCalendar.get(Calendar.MONTH) && day < todaysCalendar.get(Calendar.DATE)) {
-        ((TextView) view).setTextColor(context.getResources().getColor(R.color.greyed_out));
+      if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1) {
+        dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
+//        dateHolder.date.setClickable(false);
       }
       if (clickedFareDate != null && clickedFareDate.compareTo(currentPositionCalandar.getTime()) == 0) {
-        lowestFareDate = view;
+        lowestFareDate = (TextView) finalView;
         view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
       } else {
         view.setBackgroundColor(0);
@@ -155,6 +179,20 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public int getCount() {
       return days.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+      return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    class DateHolder {
+      TextView date;
     }
   }
 
