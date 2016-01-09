@@ -59,7 +59,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       public void onItemClick(AdapterView<?> parent, View view, int insidePosition, long id) {
         Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
         Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
-        if (clickedDate != null && clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
+        if (clickedDate != null && (clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
           clickHandler.onDayPress(clickedDate);
           clickedFareDate = clickedDate;
           notifyDataSetChanged();
