@@ -29,7 +29,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
   private final ClickHandler clickHandler;
   private final HashSet<Date> events;
   private static final String DATE_FORMAT = "MMM yyyy";
-  private TextView lowestFareDate;
   private Date clickedFareDate;
   private Calendar currentDate;
 
@@ -62,9 +61,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
         if (clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
           clickHandler.onDayPress(clickedDate);
-          if (lowestFareDate != null) {
-            lowestFareDate.setBackgroundColor(context.getResources().getColor(R.color.transparent));
-          }
           clickedFareDate = clickedDate;
           notifyDataSetChanged();
         }
@@ -112,25 +108,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         dateHolder = (DateHolder) view.getTag();
       }
 
-      final View finalView = view;
-//      dateHolder.date.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-////          Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
-////          Date clickedDate = date;
-////          if (clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
-//          clickHandler.onDayPress(date);
-////            if (lowestFareDate != null) {
-////              lowestFareDate.setBackgroundColor(context.getResources().getColor(R.color.transparent));
-////            }
-////            lowestFareDate = (TextView) finalView;
-//          clickedFareDate = date;
-//          notifyDataSetChanged();
-////            finalView.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
-////          }
-//        }
-//      });
-//      dateHolder.date.setClickable(true);
       Calendar tempCalandar = Calendar.getInstance(Locale.getDefault());
       view.setBackgroundResource(0);
 
@@ -153,10 +130,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       }
       if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1) {
         dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
-//        dateHolder.date.setClickable(false);
       }
       if (clickedFareDate != null && clickedFareDate.compareTo(currentPositionCalandar.getTime()) == 0) {
-        lowestFareDate = (TextView) finalView;
         view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
       } else {
         view.setBackgroundColor(0);
