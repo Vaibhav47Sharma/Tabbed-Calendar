@@ -58,8 +58,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int insidePosition, long id) {
         Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
+        Calendar tempCalendar = Calendar.getInstance();
         Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
-        if (clickedDate != null && (calendarDateBeanList.get(position).getCalendar().get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
+        tempCalendar.setTime(clickedDate);
+        if (clickedDate != null && (tempCalendar.get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
           clickHandler.onDayPress(clickedDate);
           clickedFareDate = clickedDate;
           notifyDataSetChanged();

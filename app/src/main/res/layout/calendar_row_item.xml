@@ -101,6 +101,7 @@
   <GridView
     android:id="@+id/calendar_grid"
     android:layout_width="match_parent"
+    android:listSelector="@android:color/transparent"
     android:layout_height="150dp"
     android:numColumns="7"/>
 </LinearLayout>
