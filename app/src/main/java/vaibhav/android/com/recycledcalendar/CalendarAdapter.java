@@ -88,16 +88,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
       DateHolder dateHolder;
-      // day in question
-      final Date date = days.get(position);
-      final Calendar currentPositionCalandar = Calendar.getInstance(Locale.getDefault());
-      currentPositionCalandar.setTime(date);
-      int day = currentPositionCalandar.get(Calendar.DATE);
-      int month = currentPositionCalandar.get(Calendar.MONTH);
-      int year = currentPositionCalandar.get(Calendar.YEAR);
-
-      // today
-      Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
 
       if (view == null) {
         view = inflater.inflate(R.layout.control_calendar_day, parent, false);
@@ -107,47 +97,57 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       } else {
         dateHolder = (DateHolder) view.getTag();
       }
+      if (days.get(position) != null) {
+        // day in question
+        final Date date = days.get(position);
+        final Calendar currentPositionCalandar = Calendar.getInstance(Locale.getDefault());
+        currentPositionCalandar.setTime(date);
+        int day = currentPositionCalandar.get(Calendar.DATE);
+        int month = currentPositionCalandar.get(Calendar.MONTH);
+        int year = currentPositionCalandar.get(Calendar.YEAR);
 
-      Calendar tempCalandar = Calendar.getInstance(Locale.getDefault());
-      view.setBackgroundResource(0);
+        // today
+        Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
 
-      dateHolder.date.setTypeface(null, Typeface.NORMAL);
-      dateHolder.date.setTextColor(Color.BLACK);
+        Calendar tempCalandar = Calendar.getInstance(Locale.getDefault());
+        view.setBackgroundResource(0);
 
-      if (month != currentDate.get(Calendar.MONTH) || year != currentDate.get(Calendar.YEAR)) {
-        // if this day is outside current month, grey it out
-        view.setVisibility(View.GONE);
-        dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
-      } else if (currentPositionCalandar.compareTo(todaysCalendar) == 0) {
-        // if it is today, set it to blue/bold
-        view.setVisibility(View.VISIBLE);
-        dateHolder.date.setTypeface(null, Typeface.BOLD);
-        dateHolder.date.setTextColor(context.getResources().getColor(R.color.today));
-      }
+        dateHolder.date.setTypeface(null, Typeface.NORMAL);
+        dateHolder.date.setTextColor(Color.BLACK);
 
-      if (month == currentDate.get(Calendar.MONTH)) {
-        dateHolder.date.setText(String.valueOf(currentPositionCalandar.get(Calendar.DATE)));
-      }
-      if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1) {
-        dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
-      }
-      if (clickedFareDate != null && clickedFareDate.compareTo(currentPositionCalandar.getTime()) == 0) {
-        view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
-      } else {
-        view.setBackgroundColor(0);
-      }
+//      if (month != currentDate.get(Calendar.MONTH) || year != currentDate.get(Calendar.YEAR)) {
+//        // if this day is outside current month, grey it out
+//        dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
+//      } else
+        if (currentPositionCalandar.compareTo(todaysCalendar) == 0) {
+          // if it is today, set it to blue/bold
+          dateHolder.date.setTypeface(null, Typeface.BOLD);
+          dateHolder.date.setTextColor(context.getResources().getColor(R.color.today));
+        }
 
-      if (eventDays != null) {
-        for (Date eventDate : eventDays) {
-          tempCalandar.setTime(eventDate);
-          if (tempCalandar.getTime().compareTo(currentPositionCalandar.getTime()) == 0) {
-            // mark this day for event
-            view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-            break;
+        if (month == currentDate.get(Calendar.MONTH)) {
+          dateHolder.date.setText(String.valueOf(currentPositionCalandar.get(Calendar.DATE)));
+        }
+        if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1) {
+          dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
+        }
+        if (clickedFareDate != null && clickedFareDate.compareTo(currentPositionCalandar.getTime()) == 0) {
+          view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+        } else {
+          view.setBackgroundColor(0);
+        }
+
+        if (eventDays != null) {
+          for (Date eventDate : eventDays) {
+            tempCalandar.setTime(eventDate);
+            if (tempCalandar.getTime().compareTo(currentPositionCalandar.getTime()) == 0) {
+              // mark this day for event
+              view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+              break;
+            }
           }
         }
       }
-
       return view;
     }
 

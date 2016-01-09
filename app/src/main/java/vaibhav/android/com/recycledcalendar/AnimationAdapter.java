@@ -23,21 +23,25 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     mAdapter = adapter;
   }
 
-  @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     return mAdapter.onCreateViewHolder(parent, viewType);
   }
 
-  @Override public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+  @Override
+  public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
     super.registerAdapterDataObserver(observer);
     mAdapter.registerAdapterDataObserver(observer);
   }
 
-  @Override public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+  @Override
+  public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
     super.unregisterAdapterDataObserver(observer);
     mAdapter.unregisterAdapterDataObserver(observer);
   }
 
-  @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+  @Override
+  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     mAdapter.onBindViewHolder(holder, position);
 
     if (!isFirstOnly || position > mLastPosition) {
@@ -45,13 +49,14 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
         anim.setDuration(mDuration).start();
         anim.setInterpolator(mInterpolator);
       }
-      mLastPosition = position;
+//      mLastPosition = position;
     } else {
       ViewHelper.clear(holder.itemView);
     }
   }
 
-  @Override public int getItemCount() {
+  @Override
+  public int getItemCount() {
     return mAdapter.getItemCount();
   }
 
@@ -73,7 +78,8 @@ public abstract class AnimationAdapter extends RecyclerView.Adapter<RecyclerView
     isFirstOnly = firstOnly;
   }
 
-  @Override public int getItemViewType(int position) {
+  @Override
+  public int getItemViewType(int position) {
     return mAdapter.getItemViewType(position);
   }
 
