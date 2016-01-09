@@ -30,6 +30,8 @@ public class CalendarDateBean {
     while (cells.size() < DAYS_COUNT) {
       if (currentPositionCalendar.get(Calendar.MONTH) == month) {
         cells.add(currentPositionCalendar.getTime());
+      } else if (currentPositionCalendar.get(Calendar.MONTH) == month + 1) {
+        break;
       } else {
         cells.add(null);
       }

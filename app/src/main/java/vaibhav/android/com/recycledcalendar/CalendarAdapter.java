@@ -59,7 +59,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       public void onItemClick(AdapterView<?> parent, View view, int insidePosition, long id) {
         Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
         Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
-        if (clickedDate != null && (clickedDate.compareTo(todaysCalendar.getTime()) == 0 || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
+        if (clickedDate != null && (calendarDateBeanList.get(position).getCalendar().get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
           clickHandler.onDayPress(clickedDate);
           clickedFareDate = clickedDate;
           notifyDataSetChanged();
@@ -86,7 +86,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
     @Override
-    public View getView(final int position, View view, ViewGroup parent) {
+    public View getView(final int insidePosition, View view, ViewGroup parent) {
       DateHolder dateHolder;
 
       if (view == null) {
@@ -97,9 +97,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
       } else {
         dateHolder = (DateHolder) view.getTag();
       }
-      if (days.get(position) != null) {
+      if (days.get(insidePosition) != null) {
         // day in question
-        final Date date = days.get(position);
+        final Date date = days.get(insidePosition);
         final Calendar currentPositionCalandar = Calendar.getInstance(Locale.getDefault());
         currentPositionCalandar.setTime(date);
         int day = currentPositionCalandar.get(Calendar.DATE);
@@ -128,25 +128,26 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         if (month == currentDate.get(Calendar.MONTH)) {
           dateHolder.date.setText(String.valueOf(currentPositionCalandar.get(Calendar.DATE)));
         }
-        if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1) {
+        if (currentPositionCalandar.getTime().compareTo(todaysCalendar.getTime()) == -1 && todaysCalendar.get(Calendar.DATE) != day) {
           dateHolder.date.setTextColor(context.getResources().getColor(R.color.greyed_out));
         }
+
         if (clickedFareDate != null && clickedFareDate.compareTo(currentPositionCalandar.getTime()) == 0) {
           view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
         } else {
           view.setBackgroundColor(0);
-        }
-
-        if (eventDays != null) {
-          for (Date eventDate : eventDays) {
-            tempCalandar.setTime(eventDate);
-            if (tempCalandar.getTime().compareTo(currentPositionCalandar.getTime()) == 0) {
-              // mark this day for event
-              view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-              break;
+          if (eventDays != null) {
+            for (Date eventDate : eventDays) {
+              tempCalandar.setTime(eventDate);
+              if (tempCalandar.getTime().compareTo(currentPositionCalandar.getTime()) == 0) {
+                // mark this day for event
+                view.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+                break;
+              }
             }
           }
         }
+
       }
       return view;
     }
