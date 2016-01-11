@@ -60,11 +60,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
         Calendar tempCalendar = Calendar.getInstance();
         Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
-        tempCalendar.setTime(clickedDate);
-        if (clickedDate != null && (tempCalendar.get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1)) {
-          clickHandler.onDayPress(clickedDate);
-          clickedFareDate = clickedDate;
-          notifyDataSetChanged();
+        if (clickedDate != null) {
+          tempCalendar.setTime(clickedDate);
+          if (tempCalendar.get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
+            clickHandler.onDayPress(clickedDate);
+            clickedFareDate = clickedDate;
+            notifyDataSetChanged();
+          }
         }
       }
     });
