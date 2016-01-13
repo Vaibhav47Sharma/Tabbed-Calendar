@@ -3,7 +3,6 @@ package vaibhav.android.com.recycledcalendar;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -32,11 +31,9 @@ public final class SnappyRecyclerView extends RecyclerView {
       velocityY = -5000;
     }
     if (lm instanceof ISnappyLayoutManager) {
-      Log.d("DAMAN", " " + velocityY);
       super.smoothScrollToPosition(((ISnappyLayoutManager) getLayoutManager()).getPositionForVelocity(velocityX, velocityY));
       return true;
     }
-    Log.d("DAMAN", " " + velocityY);
     return super.fling(velocityX, velocityY);
   }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +31,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
   private static final String DATE_FORMAT = "MMM yyyy";
   private Date clickedFareDate;
   private Calendar currentDate;
+  private static final int FOUR_ROW_ITEM = 4;
+  private static final int FIVE_ROW_ITEM = 5;
+  private static final int SIX_ROW_ITEM = 6;
 
   public CalendarAdapter(Context context, List<CalendarDateBean> calendarDateBeanList, ClickHandler clickHandler, HashSet<Date> events) {
     this.context = context;
@@ -39,8 +43,42 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
   }
 
   @Override
+  public int getItemViewType(int position) {
+    int numberOfRows = (int) Math.ceil((double) calendarDateBeanList.get(position).getCells().size()/ 7);
+    int viewType;
+    switch (numberOfRows) {
+      case 4: viewType = FOUR_ROW_ITEM;
+        break;
+      case 5: viewType = FIVE_ROW_ITEM;
+        break;
+      case 6: viewType = SIX_ROW_ITEM;
+        break;
+      default: viewType = FOUR_ROW_ITEM;
+        break;
+    }
+    return viewType;
+  }
+
+  @Override
   public CalendarViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(context).inflate(R.layout.calendar_row_item, parent, false);
+    GridView grid = (GridView) view.findViewById(R.id.calendar_grid);
+    ViewGroup.LayoutParams params = grid.getLayoutParams();
+    int rowHeight = context.getResources().getDimensionPixelSize(R.dimen.calendar_date_text_view_height);
+    int totalGridHeight;
+    switch (viewType) {
+      case FOUR_ROW_ITEM: totalGridHeight = FOUR_ROW_ITEM * rowHeight;
+        break;
+      case FIVE_ROW_ITEM: totalGridHeight = FIVE_ROW_ITEM * rowHeight;
+        break;
+      case SIX_ROW_ITEM: totalGridHeight = SIX_ROW_ITEM * rowHeight;
+        break;
+      default: totalGridHeight = FOUR_ROW_ITEM * rowHeight;
+        break;
+    }
+    params.height = totalGridHeight;
+    grid.setLayoutParams(params);
+    view.setMinimumHeight(totalGridHeight);
     CalendarViewHolder calendarViewHolder = new CalendarViewHolder(view);
     return calendarViewHolder;
   }
@@ -197,12 +235,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
   static class CalendarViewHolder extends RecyclerView.ViewHolder {
     private final TextView txtDate;
-    private final CalendarGridView grid;
+    private final GridView grid;
 
     public CalendarViewHolder(View itemView) {
       super(itemView);
       txtDate = (TextView) itemView.findViewById(R.id.calendar_date_display);
-      grid = (CalendarGridView) itemView.findViewById(R.id.calendar_grid);
+      grid = (GridView) itemView.findViewById(R.id.calendar_grid);
     }
   }
 }
