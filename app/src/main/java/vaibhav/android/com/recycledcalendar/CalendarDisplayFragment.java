@@ -4,11 +4,9 @@ package vaibhav.android.com.recycledcalendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -25,7 +23,7 @@ import java.util.Locale;
  * A simple {@link Fragment} subclass.
  */
 public class CalendarDisplayFragment extends Fragment implements CalendarAdapter.ClickHandler {
-  private RecyclerView calendarRecyclerView;
+  private SnappyRecyclerView calendarRecyclerView;
 
   public CalendarDisplayFragment() {
     // Required empty public constructor
@@ -45,7 +43,7 @@ public class CalendarDisplayFragment extends Fragment implements CalendarAdapter
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    calendarRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    calendarRecyclerView = (SnappyRecyclerView) view.findViewById(R.id.recycler_view);
     HashSet<Date> events = new HashSet<>();
     Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
     events.add(todaysCalendar.getTime());
@@ -56,15 +54,24 @@ public class CalendarDisplayFragment extends Fragment implements CalendarAdapter
       todaysCalendar.add(Calendar.MONTH, 1);
     }
 
-    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-    calendarRecyclerView.setLayoutManager(linearLayoutManager);
+//    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+//    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//    calendarRecyclerView.setLayoutManager(linearLayoutManager);
+//    CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), calendarDateBeanList, this, events);
+//    AlphaInAnimatingAdapter alphaInAnimatingAdapter = new AlphaInAnimatingAdapter(calendarAdapter);
+//    alphaInAnimatingAdapter.setDuration(500);
+//    alphaInAnimatingAdapter.setInterpolator(new OvershootInterpolator());
+////    ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(alphaInAnimatingAdapter);
+//    ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(calendarAdapter);
+//    scaleInAnimationAdapter.setDuration(500);
+//    scaleInAnimationAdapter.setInterpolator(new OvershootInterpolator());
+//    calendarRecyclerView.setAdapter(alphaInAnimatingAdapter);
+
+    SnappyLinearLayoutManager snappyLinearLayoutManager = new SnappyLinearLayoutManager(getActivity());
+    snappyLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    calendarRecyclerView.setLayoutManager(snappyLinearLayoutManager);
     CalendarAdapter calendarAdapter = new CalendarAdapter(getActivity(), calendarDateBeanList, this, events);
-    AlphaInAnimatingAdapter alphaInAnimatingAdapter = new AlphaInAnimatingAdapter(calendarAdapter);
-    alphaInAnimatingAdapter.setDuration(500);
-    alphaInAnimatingAdapter.setInterpolator(new OvershootInterpolator());
-    ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(alphaInAnimatingAdapter);
-    calendarRecyclerView.setAdapter(scaleInAnimationAdapter);
+    calendarRecyclerView.setAdapter(calendarAdapter);
   }
 
   @Override

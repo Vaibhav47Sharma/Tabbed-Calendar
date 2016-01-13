@@ -98,10 +98,10 @@
   </LinearLayout>
 
   <!-- days view -->
-  <GridView
+  <vaibhav.android.com.recycledcalendar.CalendarGridView
     android:id="@+id/calendar_grid"
     android:layout_width="match_parent"
     android:listSelector="@android:color/transparent"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     android:numColumns="7"/>
 </LinearLayout>

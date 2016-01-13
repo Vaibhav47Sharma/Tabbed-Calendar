@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -51,15 +50,15 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     currentDate = calendarDateBeanList.get(position).getCalendar();
     SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
     holder.txtDate.setText(sdf.format(currentDate.getTime()));
-    CalendarMonthAdapter calendarMonthAdapter = new CalendarMonthAdapter(context, calendarDateBeanList.get(position).getCells());
+    final ArrayList<Date> monthsdDates = calendarDateBeanList.get(position).getCells();
+    CalendarMonthAdapter calendarMonthAdapter = new CalendarMonthAdapter(context, monthsdDates);
     holder.grid.setAdapter(calendarMonthAdapter);
-
     holder.grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int insidePosition, long id) {
         Calendar todaysCalendar = Calendar.getInstance(Locale.getDefault());
         Calendar tempCalendar = Calendar.getInstance();
-        Date clickedDate = calendarDateBeanList.get(position).getCells().get(insidePosition);
+        Date clickedDate = monthsdDates.get(insidePosition);
         if (clickedDate != null) {
           tempCalendar.setTime(clickedDate);
           if (tempCalendar.get(Calendar.DATE) == todaysCalendar.get(Calendar.DATE) || clickedDate.compareTo(todaysCalendar.getTime()) == 1) {
@@ -82,11 +81,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     // for view inflation
     private LayoutInflater inflater;
     private final ArrayList<Date> days;
+    private int rowHeight;
 
     public CalendarMonthAdapter(Context context, ArrayList<Date> days) {
       this.eventDays = getEvents();
       inflater = LayoutInflater.from(context);
       this.days = days;
+    }
+
+    public int getRowHeight() {
+      return rowHeight;
+    }
+
+    private void setRowHeight(int rowHeight) {
+      if (rowHeight > 0) {
+        this.rowHeight = rowHeight;
+      }
     }
 
     @Override
@@ -151,8 +161,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             }
           }
         }
-
       }
+      setRowHeight(view.getMeasuredHeight());
       return view;
     }
 
@@ -187,12 +197,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
   static class CalendarViewHolder extends RecyclerView.ViewHolder {
     private final TextView txtDate;
-    private final GridView grid;
+    private final CalendarGridView grid;
 
     public CalendarViewHolder(View itemView) {
       super(itemView);
       txtDate = (TextView) itemView.findViewById(R.id.calendar_date_display);
-      grid = (GridView) itemView.findViewById(R.id.calendar_grid);
+      grid = (CalendarGridView) itemView.findViewById(R.id.calendar_grid);
     }
   }
 }
