@@ -25,10 +25,10 @@ public final class SnappyRecyclerView extends RecyclerView {
   @Override
   public boolean fling(int velocityX, int velocityY) {
     final LayoutManager lm = getLayoutManager();
-    if (velocityY > 5000) {
-      velocityY = 5000;
-    } else if (velocityY < -5000) {
-      velocityY = -5000;
+    if (velocityY > 10000) {
+      velocityY = 10000;
+    } else if (velocityY < -10000) {
+      velocityY = -10000;
     }
     if (lm instanceof ISnappyLayoutManager) {
       super.smoothScrollToPosition(((ISnappyLayoutManager) getLayoutManager()).getPositionForVelocity(velocityX, velocityY));

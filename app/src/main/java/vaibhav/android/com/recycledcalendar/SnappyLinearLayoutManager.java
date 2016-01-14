@@ -46,10 +46,10 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager implements IS
     if (getChildCount() == 0) {
       return 0;
     }
-    if (velocityY > 5000) {
-      velocityY = 5000;
-    } else if (velocityY < -5000) {
-      velocityY = -5000;
+    if (velocityY > 10000) {
+      velocityY = 10000;
+    } else if (velocityY < -10000) {
+      velocityY = -10000;
     }
     return calcPosForVelocity(velocityY, getChildAt(0).getTop(), getChildAt(0).getHeight(), getPosition(getChildAt(0)));
   }
