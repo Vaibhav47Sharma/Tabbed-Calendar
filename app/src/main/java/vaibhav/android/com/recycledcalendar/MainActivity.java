@@ -8,14 +8,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CalendarDisplayFragment.OnDayClickInterface {
   private TabLayout tabLayout;
   private ViewPager viewPager;
   private CalendarTabsPagerAdapter calendarTabsPagerAdapter;
+  private int tabHeight;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +28,27 @@ public class MainActivity extends AppCompatActivity {
     viewPager = (ViewPager) findViewById(R.id.view_pager);
     tabLayout = (TabLayout) findViewById(R.id.tab_layout);
     tabLayout.removeAllTabs();
-    tabLayout.addTab(tabLayout.newTab().setText("Onward"));
-    tabLayout.addTab(tabLayout.newTab().setText("Return"));
+    //Onward
+    TabLayout.Tab tab = tabLayout.newTab();
+    RelativeLayout relativeLayout = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.tab_custom_view, tabLayout, false);
+    TextView tabTitleView = (TextView) relativeLayout.findViewById(R.id.tab_text);
+    tabTitleView.setText("Onward");
+//    ViewGroup.LayoutParams params = relativeLayout.getLayoutParams();
+//    tabHeight = params.height;
+//    relativeLayout.setMinimumHeight(tabHeight);
+
+    tab.setCustomView(relativeLayout);
+    tabLayout.addTab(tab);
+
+    //Return
+    tab = tabLayout.newTab();
+    relativeLayout = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.tab_custom_view, tabLayout, false);
+    tabTitleView = (TextView) relativeLayout.findViewById(R.id.tab_text);
+    tabTitleView.setText("Return");
+//    relativeLayout.setMinimumHeight(tabHeight);
+    tab.setCustomView(relativeLayout);
+    tabLayout.addTab(tab);
+
     calendarTabsPagerAdapter = new CalendarTabsPagerAdapter(getSupportFragmentManager());
     viewPager.setAdapter(calendarTabsPagerAdapter);
     tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -56,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  @Override
+  public void changeTabTitle(String dateString, int fragmentPosition) {
+    TabLayout.Tab tab = tabLayout.getTabAt(fragmentPosition);
+    RelativeLayout relativeLayout = (RelativeLayout) tab.getCustomView();
+    TextView tabDateView = (TextView) relativeLayout.findViewById(R.id.date_text);
+    TextView tabMonthView = (TextView) relativeLayout.findViewById(R.id.month_text);
+    tabDateView.setText(dateString.split(" ", 2)[0]);
+    tabMonthView.setText(dateString.split(" ", 2)[1]);
+    tab.setCustomView(relativeLayout);
+  }
+
   public class CalendarTabsPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> registeredFragments = new ArrayList<>();
 
@@ -66,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public Fragment getItem(final int pos) {
       Fragment fragment;
-      fragment = CalendarDisplayFragment.newInstance();
+      fragment = CalendarDisplayFragment.newInstance(pos);
       registeredFragments.add(pos, fragment);
       return fragment;
     }

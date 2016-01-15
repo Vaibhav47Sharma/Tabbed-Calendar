@@ -1,6 +1,8 @@
 package vaibhav.android.com.recycledcalendar;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,18 +26,45 @@ import java.util.Locale;
  */
 public class CalendarDisplayFragment extends Fragment implements CalendarAdapter.ClickHandler {
   private SnappyRecyclerView calendarRecyclerView;
+  private int position;
+  private OnDayClickInterface onDayClickInterface;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    try {
+      onDayClickInterface = (OnDayClickInterface) context;
+    } catch (ClassCastException e) {
+
+    }
+  }
+
+  @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      onDayClickInterface = (OnDayClickInterface) activity;
+    } catch (ClassCastException e) {
+
+    }
+  }
 
   public CalendarDisplayFragment() {
     // Required empty public constructor
   }
 
-  public static CalendarDisplayFragment newInstance() {
-    return new CalendarDisplayFragment();
+  public static CalendarDisplayFragment newInstance(int position) {
+    Bundle bundle = new Bundle();
+    bundle.putInt("position", position);
+    CalendarDisplayFragment calendarDisplayFragment = new CalendarDisplayFragment();
+    calendarDisplayFragment.setArguments(bundle);
+    return calendarDisplayFragment;
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    position = getArguments().getInt("position");
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.calendar_display_fragment, container, false);
   }
@@ -77,6 +106,12 @@ public class CalendarDisplayFragment extends Fragment implements CalendarAdapter
   @Override
   public void onDayPress(Date date) {
     DateFormat df = SimpleDateFormat.getDateInstance();
+    SimpleDateFormat tabTextDateFormat = new SimpleDateFormat("dd MMM yyyy");
+    onDayClickInterface.changeTabTitle(tabTextDateFormat.format(date), position);
     Toast.makeText(getActivity(), df.format(date), Toast.LENGTH_SHORT).show();
+  }
+
+  public interface OnDayClickInterface {
+    void changeTabTitle(String dateString, int fragmentPosition);
   }
 }
